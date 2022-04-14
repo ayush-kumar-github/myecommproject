@@ -8,7 +8,7 @@ import { listProductDetails, updateProduct } from "../actions/productActions";
 import { PRODUCT_UPDATE_RESET } from "../constants/productConstants";
 
 const ProductEditScreen = () => {
-  let navigate = useNavigate();
+  const history = useNavigate();
   const params = useParams();
   const productId = params.id;
 
@@ -36,7 +36,7 @@ const ProductEditScreen = () => {
   useEffect(() => {
     if (successUpdate) {
       dispatch({ type: PRODUCT_UPDATE_RESET });
-      navigate("/admin/productlist");
+      history("/admin/productlist");
     } else {
       if (!product.name || product._id !== productId) {
         dispatch(listProductDetails(productId));
@@ -50,23 +50,20 @@ const ProductEditScreen = () => {
         setDescription(product.description);
       }
     }
-  }, [dispatch, navigate, productId, product, successUpdate]);
+  }, [product, dispatch, productId, history, successUpdate]);
 
   const uploadFileHandler = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
     formData.append("image", file);
     setUploading(true);
-
     try {
       const config = {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       };
-
       const { data } = await axios.post("/api/upload", formData, config);
-
       setImage(data);
       setUploading(false);
     } catch (error) {
@@ -93,15 +90,15 @@ const ProductEditScreen = () => {
 
   return (
     <>
-      <Link to="/admin/productlist" className="btn btn-dark my-3">
-        Go Back
+      <Link to="/admin/productlist" className="btn btn-light my-3">
+        Go back
       </Link>
       <FormContainer>
-        <h1 className="font-link">Edit Product</h1>
-        {loadingUpdate && <h4>loading.....</h4>}
+        <h1>edit product</h1>
+        {loadingUpdate && <h4>loading...</h4>}
         {errorUpdate && <h4>{errorUpdate}</h4>}
         {loading ? (
-          <h4>loading.....</h4>
+          <h4>loading...</h4>
         ) : error ? (
           <h4>{error}</h4>
         ) : (
@@ -110,7 +107,7 @@ const ProductEditScreen = () => {
               <Form.Label>Name</Form.Label>
               <Form.Control
                 type="name"
-                placeholder="Enter name"
+                placeholder="enter name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               ></Form.Control>
@@ -120,72 +117,73 @@ const ProductEditScreen = () => {
               <Form.Label>Price</Form.Label>
               <Form.Control
                 type="number"
-                placeholder="Enter price"
+                placeholder="enter price"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
               ></Form.Control>
             </Form.Group>
 
             <Form.Group controlId="image">
-              <Form.Label>Image</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter image url"
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-              ></Form.Control>
-              <input
-                type="file"
-                id="image-file"
-                label="Choose File"
-                custom
-                onChange={uploadFileHandler}
-              />
+              <Form.Label>image</Form.Label>
 
-              {uploading && <h4>loading......</h4>}
+              <div className="input-group">
+                <div>
+                  <input
+                    type="file"
+                    className="custom-file-input"
+                    id="inputGroupFile01"
+                    aria-describedby="inputGroupFileAddon01"
+                    onChange={uploadFileHandler}
+                  />
+                </div>
+              </div>
+
+              {uploading && <h4>loading....</h4>}
             </Form.Group>
 
             <Form.Group controlId="author">
               <Form.Label>author</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter author"
+                placeholder="enter author"
                 value={author}
                 onChange={(e) => setAuthor(e.target.value)}
               ></Form.Control>
             </Form.Group>
 
             <Form.Group controlId="countInStock">
-              <Form.Label>Count In Stock</Form.Label>
+              <Form.Label>count in stock</Form.Label>
               <Form.Control
                 type="number"
-                placeholder="Enter countInStock"
+                placeholder="enter countInStock"
                 value={countInStock}
                 onChange={(e) => setCountInStock(e.target.value)}
               ></Form.Control>
             </Form.Group>
 
             <Form.Group controlId="category">
-              <Form.Label>Category</Form.Label>
+              <Form.Label>category</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter category"
+                placeholder="enter category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               ></Form.Control>
             </Form.Group>
 
             <Form.Group controlId="description">
-              <Form.Label>Description</Form.Label>
+              <Form.Label>description</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter description"
+                placeholder="enter description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               ></Form.Control>
             </Form.Group>
 
-            <Button type="submit">Update</Button>
+            <Button type="submit" variant="primary">
+              update
+            </Button>
           </Form>
         )}
       </FormContainer>
